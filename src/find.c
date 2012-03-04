@@ -109,51 +109,51 @@ check_for_assignment(void)
 	* assignment or not Do this by examining the next character
 	* or two in blockp */
 	char *asgn_char = blockp;
-	int i = 1; /*skip any leading \n*/
+	unsigned int i = 0;
 
-	while(1) {
-		if (asgn_char[i] == blockmark) {
-			/* get the next block when we reach the end of
-			* the current block */
-			asgn_char = read_block();
-			i=0;
-		}
-		while (isspace((unsigned char) asgn_char[i])) {
-			/* skip any whitespace or \n */
-			i++;
-		}
-		/* this next character better be one of the assignment
-		* characters, ie: =, +=, -=, *=, %=, /=, &=, |=, ^=,
-		* ~= if not, then its a notmatched case */
-		if ((asgn_char[i] != '=') &&
-		   (asgn_char[i] != '+') && 
-		   (asgn_char[i] != '-') && 
-		   (asgn_char[i] != '*') && 
-		   (asgn_char[i] != '/') && 
-		   (asgn_char[i] != '%') && 
-		   (asgn_char[i] != '&') && 
-		   (asgn_char[i] != '|') && 
-		   (asgn_char[i] != '^') && 
-		   (asgn_char[i] != '~')) {
-			return NO;
-		} else {
-			/* if the first found character is = and the
-			* next found character is also =, then this
-			* is not an assignment.  likewise if the
-			* first character is not = (i.e. one of the
-			* +,-,*,etc. chars and the next character is
-			* not =, then this is not an assignment */
-			if ((((asgn_char[i] == '=')
-			     && (asgn_char[i+1] == '='))) 
-			   || ((asgn_char[i] != '=')
+	while (isspace((unsigned char) asgn_char[i])) {
+		/* skip any whitespace or \n */
+		i++;
+	}
+	if (asgn_char[i] == '\0') {
+		/* get the next block when we reach the end of
+		 * the current block */
+		asgn_char = read_block();
+		if (asgn_char == NULL) return NO;
+		i=0;
+    }
+
+	/* this next character better be one of the assignment
+	* characters, ie: =, +=, -=, *=, %=, /=, &=, |=, ^=,
+	* ~= if not, then its a notmatched case */
+	if ((asgn_char[i] != '=') &&
+		(asgn_char[i] != '+') && 
+		(asgn_char[i] != '-') && 
+		(asgn_char[i] != '*') && 
+		(asgn_char[i] != '/') && 
+		(asgn_char[i] != '%') && 
+		(asgn_char[i] != '&') && 
+		(asgn_char[i] != '|') && 
+		(asgn_char[i] != '^') && 
+		(asgn_char[i] != '~')) {
+		return NO;
+	} else {
+		/* if the first found character is = and the
+		* next found character is also =, then this
+		* is not an assignment.  likewise if the
+		* first character is not = (i.e. one of the
+		* +,-,*,etc. chars and the next character is
+		* not =, then this is not an assignment */
+		if ((((asgn_char[i] == '=')
+			  && (asgn_char[i+1] == '='))) 
+			|| ((asgn_char[i] != '=')
 				&& (asgn_char[i+1] != '='))) {
-				return NO;
-			}
-			/* if we pass all these filters then this is
-			* an assignment */
-			return YES;
-		} /* else(operator char?) */
-	} /* while(endless) */
+			return NO;
+		}
+		/* if we pass all these filters then this is
+		* an assignment */
+		return YES;
+	} /* else(operator char?) */
 }
 
 /* The actual routine that does the work for findsymbol() and
@@ -341,11 +341,12 @@ find_symbol_or_assignment(char *pattern, BOOL assign_flag)
 				else {
 					putref(0, file, global);
 				}
-				if (blockp == NULL) {
-					return NULL;
-				}
 			}
 		notmatched:
+			if (blockp == NULL) {
+				return NULL;
+			}
+			fcndef = NO;
 			cp = blockp;
 		}
 	}
