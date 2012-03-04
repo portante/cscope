@@ -58,6 +58,7 @@
 #define STRUCTDEF	's'
 #define TYPEDEF		't'
 #define UNIONDEF	'u'
+#define ASSIGN		'='
 
 /* other scanner token types */
 #define	LEXEOF	0
