@@ -2,7 +2,7 @@
 
 	* src/snprintf.c: Replacement implementation for missing snprintf
 	and vsprintf, from www.jhweiss.de.
-	
+
 	* acinclude: New macros to optionally activate a replacement for
 	missing snprintf and vsprintf, from www.jhweiss.de.
 
@@ -19,7 +19,7 @@
 
 	* src/global.h: Add prototypes for replacement snprintf and
 	vsnprintf.
-	
+
 	* src/*.c: Replace all calls of sprintf by snprintf to avoid
 	possible buffer overflows.
 
@@ -91,7 +91,7 @@
 	red reminder to the top of the generated HTML page warning about
 	the security issues involved with webcscope.  Thanks to V-Li and
 	the Gentoo folks for the patch.
-	
+
 2006-10-23  Neil Horman		   <nhorman@tuxdriver.com>
 
 	* src/main.c: Update sigwinch_handler to only register if linemode
@@ -104,7 +104,7 @@
 	(inviewpath): Use it to avoid unreadable files (directories, in
 	particular) getting into the srcfilelist, and thus hopefully fix
 	SF bug #1173768.
-	
+
 2006-10-10  Neil Horman            <nhorman@tuxdriver.com>
 
 	* src/main.c: Updated sigwinch_handler to not run in the event
@@ -140,7 +140,7 @@
 
 	* src/find.c (findsymbol): Missed one place where s_len had to be
 	initialized.
-				  
+
 	* src/main.c (tempstring): Parametrize length by new macro
 	TEMPSTRING_LEN.
 	(main): Check against too long -f file name.
@@ -237,7 +237,7 @@
 2006-04-21  Hans-Bernhard Broeker  <broeker@physik.rwth-achen.de>
 
 	Make source clean under -Wsign-compare.
-	
+
 	* src/main.c (fileargc): Make counter unsigned.
 	(main): Make local counter unsigned.
 	(main): Fixed two sprintf() excess arguments.
@@ -302,7 +302,7 @@
 	* configure.in: Add test for <io.h>.
 
 	* configure, config.h.in: Regenerated.
-	
+
 	* src/mypopen.c [HAVE_IO_H]: #include <io.h> it, for the setmode()
 	declaration.
 
@@ -383,7 +383,7 @@
 	* src/input.c (getline): Removed.  Was just a minimally simplified
 	copy of mygetline() anyway, and it threatened to collide with a
 	like-named routine in libc.
-	
+
 	* src/global.h (getline): Removed prototype.
 
  	* src/command.c (command): Changed all calls of getline() to
@@ -399,24 +399,24 @@
 	KEY_RESIZE case in switch statement to allow curses
 	libraries which don't support resize events to build
 
-	* src/main.c (main): Added ifdef KEY_RESIZE around 
+	* src/main.c (main): Added ifdef KEY_RESIZE around
 	SIGWINCH handler and signal registration logic to
 	remove resize code from cscope when building with
 	curses libraries that don't support resize events
 
 2005-02-04  Neil Horman  <nhorman@gmail.com>
 
-	* src/command.c (command): Added KEY_RESIZE event case to 
-	command switch to handle window re-drawing when a resize 
+	* src/command.c (command): Added KEY_RESIZE event case to
+	command switch to handle window re-drawing when a resize
 	event was received.
 
 	* src/input.c (mygetch): Added error checking of return code
 	to restart call to getch in the event it returned early due
 	to a signal being delivered.
 
-	* src/main.c (main): Registered a signal handler for the 
-	SIGWINCH handler which is delivered when a terminal is 
-	resized.  Handler pushes a KEY_RESIZE event onto the head 
+	* src/main.c (main): Registered a signal handler for the
+	SIGWINCH handler which is delivered when a terminal is
+	resized.  Handler pushes a KEY_RESIZE event onto the head
 	of the command input queue.
 
 2005-02-01  Hans-Bernhard Broeker  <broeker@physik.rwth-aachen.de>
@@ -435,13 +435,13 @@
 	manifest null pointer, not just a zero.
 
 2004-12-08  Neil Horman  <nhorman@gmail.com>
-	
-	* src/dir.c: Fix to dissallow unreadable files from 
+
+	* src/dir.c: Fix to dissallow unreadable files from
 	srcfiles list (sourceforge bug number 1040690)
 
 2004-12-06  Neil Horman  <nhorman@gmail.com>
-	
-	* src/main.c: Fix for temp file security bug (sourceforge 
+
+	* src/main.c: Fix for temp file security bug (sourceforge
 	bug number 1062807 / CAN-2004-0970)
 
 2004-11-22  Hans-Bernhard Broeker  <broeker@physik.rwth-aachen.de>
@@ -522,7 +522,7 @@
 
 	Fix SF bug #892731: Ctrl-C interruption of search works only once
 	per session.
-	
+
 	* configure.in (sigsetjmp): Added test for presence of this
 	function.
 
@@ -536,8 +536,8 @@
 
 	* Makefile.in, src/Makefile.in, contrib/Makefile.in,
 	doc/Makefile.in, aclocal.m4: Rebuilt by automake-1.7.9.
-	
-	
+
+
 2004-02-11  Hans-Bernhard Broeker  <broeker@physik.rwth-aachen.de>
 
 	* configure.in (signal.h) Check added.
@@ -627,10 +627,8 @@ Fri Sep 12 09:33:19 2003  Hans-Bernhard Broeker  <broeker@physik.rwth-aachen.de>
 	I'm finally starting a new, GNU-format ChangeLog file.  The format
  	of the previous was too terse to be really useful.  This begins
  	with the first changes after release 15.5.
-	
+
 	* ChangeLog.old: New file.  Renamed copy of old-format ChangeLog
  	file.
 
 	* ChangeLog: Started from scratch.
-
-	
