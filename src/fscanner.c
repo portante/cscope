@@ -11636,7 +11636,7 @@ char *yytext;
 #define	IFLEVELINC	5	/* #if nesting level size increment */
 #define YY_NO_TOP_STATE 1
 
-static char const rcsid[] = "$Id: fscanner.l,v 1.13 2007/01/07 12:41:23 broeker Exp $";
+static char const rcsid[] = "$Id: fscanner.l,v 1.14 2009/08/28 14:28:27 nhorman Exp $";
 
 int	first;	/* buffer index for first char of symbol */
 int	last;	/* buffer index for last char of symbol */
@@ -11822,7 +11822,7 @@ static int input (void );
 /* This used to be an fputs(), but since the string might contain NUL's,
  * we now use fwrite().
  */
-#define ECHO fwrite( yytext, yyleng, 1, yyout )
+#define ECHO do { if (fwrite( yytext, yyleng, 1, yyout )) {} } while (0)
 #endif
 
 /* Gets input and stuffs it into "buf".  number of characters read, or YY_NULL,
@@ -11833,7 +11833,7 @@ static int input (void );
 	if ( YY_CURRENT_BUFFER_LVALUE->yy_is_interactive ) \
 		{ \
 		int c = '*'; \
-		int n; \
+		unsigned n; \
 		for ( n = 0; n < max_size && \
 			     (c = getc( yyin )) != EOF && c != '\n'; ++n ) \
 			buf[n] = (char) c; \
@@ -12260,6 +12260,8 @@ YY_RULE_SETUP
 			
 			my_yymore();
 			s = strpbrk(my_yytext, "\"<");
+			if (!s)
+				return(LEXERR);
 			my_yytext[my_yyleng-1] = '\0';
 			incfile(s + 1, s);
 			my_yytext[my_yyleng-1] = remember;
@@ -12275,7 +12277,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 357 "fscanner.l"
+#line 359 "fscanner.l"
 {
 			/* could be the last enum member initializer */
 			if (braces == initializerbraces) {
@@ -12307,7 +12309,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 386 "fscanner.l"
+#line 388 "fscanner.l"
 {	/* count unmatched left parentheses for function templates */
 			++parens;
 			goto more;
@@ -12316,7 +12318,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 391 "fscanner.l"
+#line 393 "fscanner.l"
 {
 			if (--parens <= 0) {
 				parens = 0;
@@ -12332,8 +12334,10 @@ YY_RULE_SETUP
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 403 "fscanner.l"
+#line 405 "fscanner.l"
 {	/* if a global definition initializer */
+			if (!my_yytext)
+				return(LEXERR);
 			if (global == YES && ppdefine == NO && my_yytext[0] != '#') {
 				initializerbraces = braces;
 				initializer = YES;
@@ -12344,8 +12348,10 @@ YY_RULE_SETUP
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 411 "fscanner.l"
+#line 415 "fscanner.l"
 {	/* a if global structure field */
+			if (!my_yytext)
+				return(LEXERR);
 			if (global == YES && ppdefine == NO && my_yytext[0] != '#') {
 				structfield = YES;
 			}
@@ -12355,7 +12361,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 418 "fscanner.l"
+#line 424 "fscanner.l"
 {
 			if (braces == initializerbraces) {
 				initializerbraces = -1;
@@ -12368,7 +12374,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 427 "fscanner.l"
+#line 433 "fscanner.l"
 {	/* if the enum/struct/union was not a definition */
 			if (braces == 0) {
 				esudef = NO;
@@ -12390,7 +12396,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 445 "fscanner.l"
+#line 451 "fscanner.l"
 {
 				
 			/* preprocessor macro or constant definition */
@@ -12417,11 +12423,11 @@ YY_RULE_SETUP
 	YY_BREAK
 case 26:
 /* rule 26 can match eol */
-#line 469 "fscanner.l"
+#line 475 "fscanner.l"
 case 27:
 /* rule 27 can match eol */
 YY_RULE_SETUP
-#line 469 "fscanner.l"
+#line 475 "fscanner.l"
 {   /* unknown preprocessor line */
 			BEGIN(INITIAL);
 			goto more;
@@ -12431,7 +12437,7 @@ YY_RULE_SETUP
 case 28:
 /* rule 28 can match eol */
 YY_RULE_SETUP
-#line 475 "fscanner.l"
+#line 481 "fscanner.l"
 {	/* class definition */
 			classdef = YES;
 			tagdef =  'c';
@@ -12443,7 +12449,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 484 "fscanner.l"
+#line 490 "fscanner.l"
 {
 			ident_start = first;
 			BEGIN(WAS_ESU);
@@ -12454,7 +12460,7 @@ YY_RULE_SETUP
 case 30:
 /* rule 30 can match eol */
 YY_RULE_SETUP
-#line 490 "fscanner.l"
+#line 496 "fscanner.l"
 { /* e/s/u definition */
 			tagdef = my_yytext[ident_start];
 			BEGIN(WAS_IDENTIFIER);
@@ -12464,7 +12470,7 @@ YY_RULE_SETUP
 case 31:
 /* rule 31 can match eol */
 YY_RULE_SETUP
-#line 495 "fscanner.l"
+#line 501 "fscanner.l"
 { /* e/s/u definition without a tag */
 			tagdef = my_yytext[ident_start];
 			BEGIN(INITIAL);
@@ -12479,11 +12485,11 @@ YY_RULE_SETUP
 	YY_BREAK
 case 32:
 /* rule 32 can match eol */
-#line 507 "fscanner.l"
+#line 513 "fscanner.l"
 case 33:
 /* rule 33 can match eol */
 YY_RULE_SETUP
-#line 507 "fscanner.l"
+#line 513 "fscanner.l"
 {   /* e/s/u usage */
 			BEGIN(WAS_IDENTIFIER);
 			goto ident;
@@ -12493,7 +12499,7 @@ YY_RULE_SETUP
 case 34:
 /* rule 34 can match eol */
 YY_RULE_SETUP
-#line 513 "fscanner.l"
+#line 519 "fscanner.l"
 { 	/* ignore 'if' */
 			yyless(2);
 			yy_set_bol(0);
@@ -12502,7 +12508,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 519 "fscanner.l"
+#line 525 "fscanner.l"
 {	/* identifier found: do nothing, yet. (!) */
 			BEGIN(WAS_IDENTIFIER);
 			ident_start = first;
@@ -12514,7 +12520,7 @@ YY_RULE_SETUP
 case 36:
 /* rule 36 can match eol */
 YY_RULE_SETUP
-#line 527 "fscanner.l"
+#line 533 "fscanner.l"
 {
 			/* a function definition */
 			/* note: "#define a (b) {" and "#if defined(a)\n#" 
@@ -12541,7 +12547,7 @@ YY_RULE_SETUP
 case 37:
 /* rule 37 can match eol */
 YY_RULE_SETUP
-#line 549 "fscanner.l"
+#line 555 "fscanner.l"
 { 	/* function call */
 		fcncal:	if (fcndef == YES || ppdefine == YES || rules == YES) {
 				token = FCNCALL;
@@ -12559,7 +12565,7 @@ YY_RULE_SETUP
 case 38:
 /* rule 38 can match eol */
 YY_RULE_SETUP
-#line 562 "fscanner.l"
+#line 568 "fscanner.l"
 {	/* typedef name or modifier use */
 			goto ident;
 			/* NOTREACHED */
@@ -12568,7 +12574,7 @@ YY_RULE_SETUP
 case 39:
 /* rule 39 can match eol */
 YY_RULE_SETUP
-#line 566 "fscanner.l"
+#line 572 "fscanner.l"
 {		/* general identifer usage */
 			char	*s;
 
@@ -12681,7 +12687,7 @@ YY_RULE_SETUP
 
 case 40:
 YY_RULE_SETUP
-#line 676 "fscanner.l"
+#line 682 "fscanner.l"
 {	/* array dimension (don't worry or about subscripts) */
 			arraydimension = YES;
 			goto more;
@@ -12690,7 +12696,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 681 "fscanner.l"
+#line 687 "fscanner.l"
 {
 			arraydimension = NO;
 			goto more;
@@ -12700,7 +12706,7 @@ YY_RULE_SETUP
 case 42:
 /* rule 42 can match eol */
 YY_RULE_SETUP
-#line 686 "fscanner.l"
+#line 692 "fscanner.l"
 {	/* preprocessor statement is continued on next line */
 			/* save the '\\' to the output file, but not the '\n': */
 			yyleng = 1;
@@ -12712,7 +12718,7 @@ YY_RULE_SETUP
 case 43:
 /* rule 43 can match eol */
 YY_RULE_SETUP
-#line 693 "fscanner.l"
+#line 699 "fscanner.l"
 {	/* end of the line */
 			if (ppdefine == YES) {	/* end of a #define */
 				ppdefine = NO;
@@ -12765,7 +12771,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 743 "fscanner.l"
+#line 749 "fscanner.l"
 {	/* character constant */
 			if (sdl == NO) 
 				BEGIN(IN_SQUOTE);
@@ -12775,7 +12781,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 749 "fscanner.l"
+#line 755 "fscanner.l"
 {	
 			BEGIN(INITIAL);
 			goto more;
@@ -12784,7 +12790,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 754 "fscanner.l"
+#line 760 "fscanner.l"
 {	/* string constant */
 			BEGIN(IN_DQUOTE);
 			goto more;
@@ -12793,7 +12799,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 759 "fscanner.l"
+#line 765 "fscanner.l"
 {	
 			BEGIN(INITIAL);
 			goto more;
@@ -12804,7 +12810,7 @@ YY_RULE_SETUP
 case 48:
 /* rule 48 can match eol */
 YY_RULE_SETUP
-#line 765 "fscanner.l"
+#line 771 "fscanner.l"
 {	/* syntax error: unexpected EOL */
 			BEGIN(INITIAL);
 			goto eol;
@@ -12812,10 +12818,10 @@ YY_RULE_SETUP
 		}
 	YY_BREAK
 case 49:
-#line 771 "fscanner.l"
+#line 777 "fscanner.l"
 case 50:
 YY_RULE_SETUP
-#line 771 "fscanner.l"
+#line 777 "fscanner.l"
 {
 			goto more;
 			/* NOTREACHED */
@@ -12824,7 +12830,7 @@ YY_RULE_SETUP
 case 51:
 /* rule 51 can match eol */
 YY_RULE_SETUP
-#line 775 "fscanner.l"
+#line 781 "fscanner.l"
 {		/* line continuation inside a string! */
 			myylineno++;
 			goto more;
@@ -12834,21 +12840,21 @@ YY_RULE_SETUP
 
 case 52:
 YY_RULE_SETUP
-#line 782 "fscanner.l"
+#line 788 "fscanner.l"
 {		/* don't save leading white space */
 		}
 	YY_BREAK
 case 53:
 /* rule 53 can match eol */
 YY_RULE_SETUP
-#line 785 "fscanner.l"
+#line 791 "fscanner.l"
 {		/* eat whitespace at end of line */
 			unput('\n');
 		}
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
-#line 789 "fscanner.l"
+#line 795 "fscanner.l"
 {	/* eat non-blank whitespace sequences, replace
 			 * by single blank */
 			unput(' ');
@@ -12856,31 +12862,31 @@ YY_RULE_SETUP
 	YY_BREAK
 case 55:
 YY_RULE_SETUP
-#line 794 "fscanner.l"
+#line 800 "fscanner.l"
 {   /* compress sequential whitespace here, not in putcrossref() */
 			unput(' ');
  		}
 	YY_BREAK
 case 56:
 YY_RULE_SETUP
-#line 798 "fscanner.l"
+#line 804 "fscanner.l"
 yy_push_state(COMMENT);
 	YY_BREAK
 
 case 57:
-#line 801 "fscanner.l"
+#line 807 "fscanner.l"
 case 58:
 YY_RULE_SETUP
-#line 801 "fscanner.l"
+#line 807 "fscanner.l"
 ; /* do nothing */
 	YY_BREAK
 case 59:
 /* rule 59 can match eol */
-#line 803 "fscanner.l"
+#line 809 "fscanner.l"
 case 60:
 /* rule 60 can match eol */
 YY_RULE_SETUP
-#line 803 "fscanner.l"
+#line 809 "fscanner.l"
 {
 			if (ppdefine == NO) {
 				goto eol;
@@ -12892,7 +12898,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 61:
 YY_RULE_SETUP
-#line 811 "fscanner.l"
+#line 817 "fscanner.l"
 {
 			/* replace the comment by a single blank */
 			unput(' ');
@@ -12903,7 +12909,7 @@ YY_RULE_SETUP
 case 62:
 /* rule 62 can match eol */
 YY_RULE_SETUP
-#line 818 "fscanner.l"
+#line 824 "fscanner.l"
 {
 			/* C++-style one-line comment */
 			goto eol;
@@ -12911,12 +12917,12 @@ YY_RULE_SETUP
 		}
 	YY_BREAK
 case 63:
-#line 825 "fscanner.l"
+#line 831 "fscanner.l"
 case 64:
-#line 826 "fscanner.l"
+#line 832 "fscanner.l"
 case 65:
 YY_RULE_SETUP
-#line 826 "fscanner.l"
+#line 832 "fscanner.l"
 {	/* punctuation and operators */
 						more:	
 							my_yymore();
@@ -12925,10 +12931,10 @@ YY_RULE_SETUP
 	YY_BREAK
 case 66:
 YY_RULE_SETUP
-#line 832 "fscanner.l"
+#line 838 "fscanner.l"
 ECHO;
 	YY_BREAK
-#line 12932 "fscanner.c"
+#line 12938 "fscanner.c"
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(SDL):
 case YY_STATE_EOF(IN_PREPROC):
@@ -13982,7 +13988,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 832 "fscanner.l"
+#line 838 "fscanner.l"
 
 
 

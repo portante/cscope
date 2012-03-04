@@ -52,7 +52,7 @@
 #define	IFLEVELINC	5	/* #if nesting level size increment */
 #define YY_NO_TOP_STATE 1
 
-static char const rcsid[] = "$Id: fscanner.l,v 1.13 2007/01/07 12:41:23 broeker Exp $";
+static char const rcsid[] = "$Id: fscanner.l,v 1.14 2009/08/28 14:28:27 nhorman Exp $";
 
 int	first;	/* buffer index for first char of symbol */
 int	last;	/* buffer index for last char of symbol */
@@ -341,6 +341,8 @@ wsnl		[ \t\r\v\f\n]|{comment}
 			
 			my_yymore();
 			s = strpbrk(my_yytext, "\"<");
+			if (!s)
+				return(LEXERR);
 			my_yytext[my_yyleng-1] = '\0';
 			incfile(s + 1, s);
 			my_yytext[my_yyleng-1] = remember;
@@ -401,6 +403,8 @@ wsnl		[ \t\r\v\f\n]|{comment}
 			/* NOTREACHED */
 		}
 =		{	/* if a global definition initializer */
+			if (!my_yytext)
+				return(LEXERR);
 			if (global == YES && ppdefine == NO && my_yytext[0] != '#') {
 				initializerbraces = braces;
 				initializer = YES;
@@ -409,6 +413,8 @@ wsnl		[ \t\r\v\f\n]|{comment}
 			/* NOTREACHED */
 		}
 :		{	/* a if global structure field */
+			if (!my_yytext)
+				return(LEXERR);
 			if (global == YES && ppdefine == NO && my_yytext[0] != '#') {
 				structfield = YES;
 			}

@@ -30,7 +30,7 @@
  DAMAGE. 
  =========================================================================*/
 
-/* $Id: scanner.h,v 1.4 2005/01/31 16:50:33 broeker Exp $ */
+/* $Id: scanner.h,v 1.5 2009/08/28 14:28:27 nhorman Exp $ */
 
 
 #ifndef CSCOPE_SCANNER_H
@@ -60,9 +60,10 @@
 #define UNIONDEF	'u'
 
 /* other scanner token types */
-#define LEXEOF	0
-#define	IDENT	1
-#define	NEWLINE	2
+#define	LEXEOF	0
+#define	LEXERR	1
+#define	IDENT	2	
+#define	NEWLINE	3	
 
 /* scanner.l global data */
 extern	int	first;		/* buffer index for first char of symbol */
